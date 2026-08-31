@@ -1,0 +1,11 @@
+global using TimboLearn.Infrastructure.Persistence;
+global using TimboLearn.Infrastructure.Queries;
+global using TimboLearn.Infrastructure.AI;
+global using TimboLearn.Features.Users;
+global using TimboLearn.Features.Teams;
+global using TimboLearn.Features.ContentCourses;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.IdentityModel.Tokens;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Security.Claims;

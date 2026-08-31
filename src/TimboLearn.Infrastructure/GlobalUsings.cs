@@ -1,0 +1,9 @@
+global using TimboLearn.Infrastructure.Persistence;
+global using TimboLearn.Infrastructure.Entities;
+global using TimboLearn.Infrastructure.Queries;
+global using TimboLearn.Infrastructure.AI;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using Dapper;
+global using System.Data;
+global using Microsoft.Data.SqlClient;
