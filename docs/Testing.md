@@ -64,14 +64,14 @@ The easiest way to test is with a test token:
 **Expected Response:**
 ```json
 {
-  "id": "test-demo@timbolearn.local",
+  "id": 1,
   "email": "demo@timbolearn.local",
   "firstName": "Demo",
   "lastName": "User",
   "isActive": true,
   "teamMemberships": [
     {
-      "teamId": "10000000-0000-0000-0000-000000000001",
+      "teamId": 1,
       "teamName": "Engineering Team",
       "role": "TeamAdmin"
     }
@@ -119,7 +119,7 @@ The easiest way to test is with a test token:
 **Request:**
 ```json
 {
-  "userId": "00000000-0000-0000-0000-000000000006",
+  "userId": 6,
   "role": "Member"
 }
 ```
@@ -127,7 +127,7 @@ The easiest way to test is with a test token:
 **Expected Response:** `200 OK`
 
 **Test Steps:**
-1. Use Engineering Team ID: `10000000-0000-0000-0000-000000000001`
+1. Use Engineering Team ID: `1`
 2. Add Frank Miller (already in Marketing, cross-functional)
 3. Verify 200 OK response
 4. Execute `GET /api/teams/{id}/hierarchy` to see updated membership
@@ -144,24 +144,24 @@ The easiest way to test is with a test token:
 ```json
 [
   {
-    "id": "10000000-0000-0000-0000-000000000001",
+    "id": 1,
     "name": "Engineering Team",
     "code": "ENG",
     "parentTeamId": null,
     "level": 0
   },
   {
-    "id": "11000000-0000-0000-0000-000000000001",
+    "id": 11,
     "name": "Frontend Team",
     "code": "FE",
-    "parentTeamId": "10000000-0000-0000-0000-000000000001",
+    "parentTeamId": 1,
     "level": 1
   },
   {
-    "id": "11000000-0000-0000-0000-000000000002",
+    "id": 12,
     "name": "Backend Team",
     "code": "BE",
-    "parentTeamId": "10000000-0000-0000-0000-000000000001",
+    "parentTeamId": 1,
     "level": 1
   }
 ]
@@ -206,8 +206,8 @@ The easiest way to test is with a test token:
 **Request:**
 ```json
 {
-  "contentCourseId": "20000000-0000-0000-0000-000000000001",
-  "targetTeamId": "10000000-0000-0000-0000-000000000001",
+  "contentCourseId": 1,
+  "targetTeamId": 1,
   "dueDateUtc": "2026-12-31T23:59:59Z"
 }
 ```

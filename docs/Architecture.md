@@ -87,7 +87,7 @@ public async Task<Team> CreateTeamAsync(Team team)
 }
 
 // Reads use Dapper (via IDbConnection)
-public async Task<IEnumerable<TeamDto>> GetTeamHierarchyAsync(Guid id)
+public async Task<IEnumerable<TeamDto>> GetTeamHierarchyAsync(int id)
 {
     const string sql = """
         WITH TeamTree AS (
@@ -132,7 +132,7 @@ public async Task<IEnumerable<TeamDto>> GetTeamHierarchyAsync(Guid id)
 ```csharp
 public class User
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public string ExternalIdentityId { get; set; }  // Correlates with Auth0/Entra sub claim
     public string Email { get; set; }
     public string FirstName { get; set; }
@@ -148,11 +148,11 @@ public class User
 ```csharp
 public class Team
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public string Name { get; set; }
     public string Code { get; set; }
     public string? Description { get; set; }
-    public Guid? ParentTeamId { get; set; }  // Self-reference for hierarchy
+    public int? ParentTeamId { get; set; }  // Self-reference for hierarchy
     
     public Team? ParentTeam { get; set; }
     public ICollection<Team> SubTeams { get; set; }
@@ -164,8 +164,8 @@ public class Team
 ```csharp
 public class TeamMembership
 {
-    public Guid UserId { get; set; }
-    public Guid TeamId { get; set; }
+    public int UserId { get; set; }
+    public int TeamId { get; set; }
     public TeamRole Role { get; set; }  // Member, TeamManager, TeamAdmin
     
     public User User { get; set; }
@@ -184,7 +184,7 @@ public enum TeamRole
 ```csharp
 public class ContentCourse
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
     public bool IsPublished { get; set; }
@@ -199,10 +199,10 @@ public class ContentCourse
 ```csharp
 public class ContentCourseAssignment
 {
-    public Guid Id { get; set; }
-    public Guid ContentCourseId { get; set; }
-    public Guid? TargetUserId { get; set; }  // Assign to individual
-    public Guid? TargetTeamId { get; set; }  // Assign to team
+    public int Id { get; set; }
+    public int ContentCourseId { get; set; }
+    public int? TargetUserId { get; set; }  // Assign to individual
+    public int? TargetTeamId { get; set; }  // Assign to team
     public DateTime AssignedAtUtc { get; set; }
     public DateTime? DueDateUtc { get; set; }
     public AssignmentStatus Status { get; set; }
