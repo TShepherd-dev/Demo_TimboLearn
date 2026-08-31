@@ -4,7 +4,11 @@
 
 **TimboLearn** is an enterprise-grade demonstration application built with **.NET 10** to illustrate modern C# backend architecture, Vertical Slice Architecture, high-performance data patterns, cloud-native orchestration, and AI integration.
 
-This repository serves as a **portfolio showcase** for prospective employers and technical architects, demonstrating what a modern enterprise learning platform backend should look like.
+This repository serves as a **portfolio showcase** for prospective employers and technical architects, demonstrating what a modern enterprise learning platform backend should/could look like.
+
+It is meant to demonstrate the specific scenario "if I was asked to start a brand new API from scratch", how could I do that using common/standard/best industry pracitices, and my own experience of designing and working on a very very mature large-scale codebase.
+
+AI Tools (OpenCode and Qwen3.5) have been used to build this, and the project will compile, it is not designed to run. More work is required but it is a start.
 
 ---
 
