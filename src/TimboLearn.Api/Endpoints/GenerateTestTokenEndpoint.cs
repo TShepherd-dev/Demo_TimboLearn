@@ -12,7 +12,7 @@ public class GenerateTestTokenEndpoint : EndpointWithoutRequest<TestTokenRespons
         Summary(s =>
         {
             s.Summary = "Generate a test JWT token";
-            s.Description = "Generates a valid JWT token for testing the API without Auth0";
+            s.Description = "Generates a valid JWT token for testing the API without Auth0.\n\n**How to use with Swagger:**\n1. Click the 🔒 Authorize button (top right)\n2. Enter: `Bearer <paste-token-here>`\n3. Click Authorize\n4. Now all protected endpoints will include the token";
         });
     }
 

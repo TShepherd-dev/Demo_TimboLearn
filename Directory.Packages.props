@@ -5,8 +5,8 @@
   <ItemGroup>
     <!-- FastEndpoints -->
     <PackageVersion Include="FastEndpoints" Version="5.31.0" />
-    <PackageVersion Include="FastEndpoints.Security" Version="5.31.0" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="5.31.0" />
+    <PackageVersion Include="FastEndpoints.Security" Version="5.31.0" />
     
     <!-- Entity Framework Core -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0-rc.1.25451.10" />

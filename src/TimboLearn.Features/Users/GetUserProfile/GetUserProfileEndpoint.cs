@@ -1,3 +1,6 @@
+using TimboLearn.Infrastructure;
+using Microsoft.AspNetCore.Http;
+
 namespace TimboLearn.Features.Users.GetUserProfile;
 
 public class GetUserProfileEndpoint : EndpointWithoutRequest<UserProfileResponse>
@@ -13,7 +16,8 @@ public class GetUserProfileEndpoint : EndpointWithoutRequest<UserProfileResponse
     {
         Get("/api/users/me");
         Policies("RequireAuthenticatedUser");
-        Summary(s => {
+        Summary(s =>
+        {
             s.Summary = "Retrieves current authenticated user details";
             s.Description = "Supports Just-In-Time (JIT) provisioning upon initial token validation.";
         });
@@ -21,11 +25,11 @@ public class GetUserProfileEndpoint : EndpointWithoutRequest<UserProfileResponse
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var externalId = User.FindFirst("sub")?.Value 
-            ?? throw new BadHttpRequestException("Missing identity claim: sub");
+        var externalId = User.GetSubjectId() 
+            ?? throw new BadHttpRequestException("Missing identity claim: sub or nameidentifier");
 
-        var email = User.FindFirst("email")?.Value ?? string.Empty;
-        var name = User.FindFirst("name")?.Value ?? email.Split('@').First();
+        var email = User.GetEmail() ?? string.Empty;
+        var name = User.GetName() ?? email.Split('@').First();
 
         var profile = await _userService.GetOrProvisionUserAsync(externalId, email, name, ct);
         await SendOkAsync(profile, ct);

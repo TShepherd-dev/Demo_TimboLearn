@@ -2,13 +2,11 @@
 
 ## Showcase Demo Project
 
-**TimboLearn** is an enterprise-grade demonstration application built with **.NET 10** to illustrate modern C# backend architecture, Vertical Slice Architecture, high-performance data patterns, cloud-native orchestration, and AI integration.
+**TimboLearn** is an enterprise-grade demonstration application built with **.NET 10** to illustrate modern C# backend architecture, Vertical Slice Architecture, high-performance data patterns, and AI integration.
 
-This repository serves as a **portfolio showcase** for prospective employers and technical architects, demonstrating what a modern enterprise learning platform backend should/could look like.
+This repository serves as a **portfolio showcase** for prospective employers and technical architects, demonstrating what a modern enterprise learning platform backend should look like.
 
-It is meant to demonstrate the specific scenario "if I was asked to start a brand new API from scratch", how could I do that using common/standard/best industry practices, and my own experience of designing and working on a very very mature large-scale codebase.
-
-AI Tools (OpenCode and Qwen3.5) have been used to build this. The project will compile, it is not designed to run. More work is required but it is a start.
+**📚 Full Documentation:** See the [docs](docs/README.md) folder for detailed guides on getting started, architecture, testing, and troubleshooting.
 
 ---
 
@@ -98,80 +96,27 @@ TimboLearn.sln
 
 ## Getting Started
 
-### Prerequisites
+### Quick Start (5 Minutes)
 
-- .NET 10 SDK
-- Visual Studio 2022 / Rider / VS Code
-- (Optional) SQL Server (LocalDB or Express) - for production-like setup
-
-### Quick Start - Local Development Mode (Recommended)
-
-**No SQL Server required!** The project uses SQLite by default for easy local development and demos.
+**No SQL Server required!** The project uses SQLite by default.
 
 ```bash
-# 1. Restore dependencies
-dotnet restore
+# 1. Restore & Build
+dotnet restore && dotnet build
 
-# 2. Build solution
-dotnet build
-
-# 3. Run the API (SQLite database auto-created)
+# 2. Run the API (SQLite database auto-created with demo data)
 dotnet run --project src/TimboLearn.Api
 
-# 4. Open Swagger UI
+# 3. Open Swagger UI
 # Navigate to: http://localhost:5000/swagger
+
+# 4. Generate test token (no auth required)
+# POST /api/test-token in Swagger UI
+
+# 5. Test any endpoint with your token!
 ```
 
-**Auto-Seeded Demo Data:**
-- 10 Users (Alice through Jack)
-- 2 Teams (Engineering Team with 5 users, Marketing Team with 8 users)
-- 3 Content Courses (Cybersecurity, Communication, Project Management)
-- 3 Course Assignments
-
-### Testing the API
-
-**Option 1: Generate Test Token (Easiest)**
-
-1. In Swagger UI, call `POST /api/test-token` (no auth required)
-2. Copy the returned JWT token
-3. Click "Authorize" button
-4. Paste: `Bearer <your-token-here>`
-5. Now you can call all protected endpoints!
-
-**Option 2: Use Auth0/Entra ID**
-
-Configure `appsettings.json` with your Auth0 or Entra ID details.
-
-### Database Setup
-
-**SQLite (Default - for local development):**
-```bash
-# Database is auto-created as timbolearn.db in the Api project folder
-
-# To reset: delete the .db file and re-run
-rm src/TimboLearn.Api/timbolearn.db
-
-# Migrations are auto-applied on startup in Development mode
-```
-
-**SQL Server (Optional - for production-like testing):**
-```bash
-# Update connection string in appsettings.json:
-# "ConnectionStrings": { "TimboLearnDb": "Server=(localdb)\\mssqllocaldb;Database=TimboLearn;Trusted_Connection=True;" }
-
-# Create migrations
-dotnet ef migrations add InitialCreate --project src/TimboLearn.Infrastructure --startup-project src/TimboLearn.Api
-
-# Update database
-dotnet ef database update --project src/TimboLearn.Infrastructure --startup-project src/TimboLearn.Api
-```
-
-### API Documentation
-
-Once running, access the Swagger UI at:
-```
-http://localhost:5000/swagger
-```
+**📖 Full Setup Guide:** See [docs/GettingStarted.md](docs/GettingStarted.md) for complete instructions, database configuration, and testing scenarios.
 
 ---
 
@@ -212,16 +157,7 @@ TimboLearn implements **policy-based authorization** with custom handlers:
 | `CanAssignContentCourse` | Assign content courses | Permission: `ContentCourse.Assign` OR Role: `TeamAdmin/Manager` |
 | `CanManageContentCourses` | Create/manage content courses | Permission: `ContentCourse.Manage` OR Role: `Admin` |
 
-### Claim Requirements
-
-Tokens must include the following claims:
-- `sub`: External identity ID (for JIT user provisioning)
-- `email`: User email address
-- `name`: User full name
-- `role`: User role (optional, for authorization)
-- `permission`: Specific permissions (optional)
-
-**For Local Development:** Use `POST /api/test-token` endpoint to generate a valid test token with all required claims. The test token uses a symmetric signing key configured in `appsettings.json`.
+**🧪 Testing Guide:** See [docs/Testing.md](docs/Testing.md) for complete testing scenarios, test token usage, and automated test examples.
 
 ---
 
@@ -251,7 +187,7 @@ Tokens must include the following claims:
 
 ## High-Performance Queries: Dapper Recursive CTE
 
-Team hierarchy retrieval uses a recursive Common Table Expression:
+Team hierarchy retrieval uses a recursive Common Table Expression for efficient traversal:
 
 ```sql
 WITH TeamTree AS (
@@ -266,7 +202,7 @@ WITH TeamTree AS (
 SELECT * FROM TeamTree ORDER BY Level, Name;
 ```
 
-This pattern enables efficient retrieval of deeply nested organizational structures in a single round-trip.
+**🏗️ Architecture Deep Dive:** See [docs/Architecture.md](docs/Architecture.md) for complete domain model, design decisions, and technical implementation details.
 
 ---
 
@@ -330,21 +266,19 @@ The project includes several features to make local development and demos easier
 - Try endpoints directly from browser
 - Built-in JWT token input
 
+**🔧 Troubleshooting:** See [docs/Troubleshooting.md](docs/Troubleshooting.md) for common issues, database reset procedures, and debugging tips.
+
 ---
 
 ## Testing Strategy
 
-Integration tests use **Testcontainers** to spin up real SQL Server instances:
+Integration tests use **Testcontainers** to spin up real SQL Server instances in Docker:
 
 ```bash
 dotnet test tests/TimboLearn.IntegrationTests
 ```
 
-### Test Patterns
-
-- WebApplicationFactory for in-process API hosting
-- Testcontainers.MsSql for isolated database instances
-- FluentAssertions for expressive test assertions
+**🧪 Complete Testing Guide:** See [docs/Testing.md](docs/Testing.md) for manual testing scenarios, Swagger UI usage, curl examples, and automated integration test patterns.
 
 ---
 
@@ -370,30 +304,20 @@ dotnet test tests/TimboLearn.IntegrationTests
 ✅ **Performance**: Dapper for complex reads and projections  
 ✅ **Best of Both**: Leverages strengths of each tool  
 
+**🏗️ Full Architecture:** See [docs/Architecture.md](docs/Architecture.md) for complete design decisions, domain model, and implementation details.  
+
 ---
 
-## Troubleshooting
+---
 
-**Database Issues:**
-```bash
-# Reset SQLite database
-rm src/TimboLearn.Api/timbolearn.db
-dotnet run --project src/TimboLearn.Api  # DB auto-recreated with seed data
-```
+## 📚 Documentation
 
-**Migration Issues:**
-```bash
-# Remove last migration
-dotnet ef migrations remove --project src/TimboLearn.Infrastructure
+For detailed guides and technical information:
 
-# Recreate migration
-dotnet ef migrations add InitialCreate --project src/TimboLearn.Infrastructure --startup-project src/TimboLearn.Api
-```
-
-**Authentication Issues:**
-- Ensure you have a valid JWT token (use `/api/test-token` endpoint)
-- Token must include `email`, `name`, and `sub` claims
-- For role-based auth, include `role` claim with values: `TeamAdmin`, `TeamManager`, or `Member`
+- **[Getting Started](docs/GettingStarted.md)** - Complete setup guide, database configuration, testing scenarios
+- **[Architecture](docs/Architecture.md)** - Technical deep dive, domain model, design decisions
+- **[Testing](docs/Testing.md)** - Manual and automated testing strategies
+- **[Troubleshooting](docs/Troubleshooting.md)** - Common issues and solutions
 
 ---
 
