@@ -1,6 +1,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Data.Sqlite;
 
 namespace TimboLearn.Infrastructure.Persistence;
 
@@ -27,5 +28,20 @@ public class SqlConnectionFactory : IDbConnectionFactory
     public IDbConnection CreateConnection()
     {
         return new SqlConnection(_connectionString);
+    }
+}
+
+public class SqliteConnectionFactory : IDbConnectionFactory
+{
+    private readonly string _connectionString;
+
+    public SqliteConnectionFactory(string connectionString)
+    {
+        _connectionString = connectionString;
+    }
+
+    public IDbConnection CreateConnection()
+    {
+        return new SqliteConnection(_connectionString);
     }
 }

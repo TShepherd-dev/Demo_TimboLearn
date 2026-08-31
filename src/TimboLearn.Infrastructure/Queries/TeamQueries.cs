@@ -25,12 +25,12 @@ public class TeamQueries
         const string sql = """
             WITH TeamTree AS (
                 SELECT Id, Name, Code, ParentTeamId, 0 AS Level
-                FROM dbo.Teams
+                FROM Teams
                 WHERE Id = @ParentTeamId
                 UNION ALL
-                SELECT g.Id, g.Name, g.Code, g.ParentTeamId, gt.Level + 1
-                FROM dbo.Teams g
-                INNER JOIN TeamTree gt ON g.ParentTeamId = gt.Id
+                SELECT t.Id, t.Name, t.Code, t.ParentTeamId, tt.Level + 1
+                FROM Teams t
+                INNER JOIN TeamTree tt ON t.ParentTeamId = tt.Id
             )
             SELECT * FROM TeamTree ORDER BY Level, Name;
             """;
@@ -44,12 +44,12 @@ public class TeamQueries
         const string sql = """
             WITH TeamTree AS (
                 SELECT Id, Name, Code, ParentTeamId, 0 AS Level
-                FROM dbo.Teams
+                FROM Teams
                 WHERE ParentTeamId IS NULL
                 UNION ALL
-                SELECT g.Id, g.Name, g.Code, g.ParentTeamId, gt.Level + 1
-                FROM dbo.Teams g
-                INNER JOIN TeamTree gt ON g.ParentTeamId = gt.Id
+                SELECT t.Id, t.Name, t.Code, t.ParentTeamId, tt.Level + 1
+                FROM Teams t
+                INNER JOIN TeamTree tt ON t.ParentTeamId = tt.Id
             )
             SELECT * FROM TeamTree ORDER BY Level, Name;
             """;
@@ -62,7 +62,7 @@ public class TeamQueries
     {
         const string sql = """
             SELECT Id, Name, Code, ParentTeamId, 0 AS Level
-            FROM dbo.Teams
+            FROM Teams
             WHERE Id = @TeamId;
             """;
 
@@ -74,7 +74,7 @@ public class TeamQueries
     {
         const string sql = """
             SELECT TeamId
-            FROM dbo.TeamMemberships
+            FROM TeamMemberships
             WHERE UserId = @UserId;
             """;
 
@@ -99,15 +99,15 @@ public class TeamQueries
                 u.LastName,
                 u.IsActive,
                 u.CreatedAtUtc,
-                STRING_AGG(g.Name, ', ') AS Teams
-            FROM dbo.Users u
-            LEFT JOIN dbo.TeamMemberships ugm ON u.Id = ugm.UserId
-            LEFT JOIN dbo.Teams g ON ugm.TeamId = g.Id
+                COALESCE(GROUP_CONCAT(tm.Name), '') AS Teams
+            FROM Users u
+            LEFT JOIN TeamMemberships ugm ON u.Id = ugm.UserId
+            LEFT JOIN Teams tm ON ugm.TeamId = tm.Id
             WHERE (@SearchTerm IS NULL OR u.FirstName LIKE @SearchPattern OR u.LastName LIKE @SearchPattern OR u.Email LIKE @SearchPattern)
-              AND (@TeamId IS NULL OR g.Id = @TeamId)
+              AND (@TeamId IS NULL OR tm.Id = @TeamId)
             GROUP BY u.Id, u.Email, u.FirstName, u.LastName, u.IsActive, u.CreatedAtUtc
             ORDER BY u.LastName, u.FirstName
-            OFFSET @Skip ROWS FETCH NEXT @PageSize ROWS ONLY;
+            LIMIT @PageSize OFFSET @Skip;
             """;
 
         using var connection = _connectionFactory.CreateConnection();

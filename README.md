@@ -8,7 +8,7 @@ This repository serves as a **portfolio showcase** for prospective employers and
 
 It is meant to demonstrate the specific scenario "if I was asked to start a brand new API from scratch", how could I do that using common/standard/best industry practices, and my own experience of designing and working on a very very mature large-scale codebase.
 
-AI Tools (OpenCode and Qwen3.5) have been used to build this, and the project will compile, it is not designed to run. More work is required but it is a start.
+AI Tools (OpenCode and Qwen3.5) have been used to build this. The project will compile, it is not designed to run. More work is required but it is a start.
 
 ---
 
@@ -52,9 +52,9 @@ AI Tools (OpenCode and Qwen3.5) have been used to build this, and the project wi
 | **API Framework** | FastEndpoints | High-throughput, REPR-pattern endpoint slicing |
 | **Data (ORM)** | EF Core 10 | Domain writes, unit of work, migrations |
 | **Data (Queries)** | Dapper | Lightning-fast read queries and projection |
-| **Database** | SQL Server | Enterprise relational data store |
-| **Authentication** | JWT Bearer | OIDC token validation |
-| **AI Integration** | Custom Agent Pattern | Training plan generation from prompts |
+| **Database** | SQL Server / SQLite | Enterprise relational store / Local dev with SQLite |
+| **Authentication** | JWT Bearer | OIDC token validation / Test tokens for local dev |
+| **AI Integration** | Custom Agent Pattern | Training course generation from prompts |
 | **Resilience** | Polly | Retry, circuit breaker, timeout handlers |
 | **Testing** | xUnit + Testcontainers | Integration testing with real SQL containers |
 
@@ -65,9 +65,11 @@ AI Tools (OpenCode and Qwen3.5) have been used to build this, and the project wi
 ```
 TimboLearn.sln
 ├── src/
-│   ├── TimboLearn.AppHost/               # .NET Aspire Orchestrator
 │   ├── TimboLearn.ServiceDefaults/       # Shared OpenTelemetry, Health Checks
 │   ├── TimboLearn.Api/                   # Web API Host (FastEndpoints, Auth)
+│   │   ├── Endpoints/                    # API endpoints (test token, etc.)
+│   │   ├── Authorization/                # Policies, handlers, test token generator
+│   │   └── Middleware/                   # User context middleware
 │   ├── TimboLearn.Features/              # Business Slices (Vertical Architecture)
 │   │   ├── Users/
 │   │   │   ├── GetUserProfile/
@@ -77,13 +79,20 @@ TimboLearn.sln
 │   │   │   ├── AddUserToTeam/
 │   │   │   └── GetTeamHierarchy/
 │   │   └── ContentCourses/
-│   │       ├── CreateContentGroup/
-│   │       ├── AssignContentGroup/
-│   │       └── GeneratePlanWithAI/
+│   │       ├── CreateContentCourse/
+│   │       ├── AssignContentCourse/
+│   │       └── GenerateContentCourseWithAI/
 │   └── TimboLearn.Infrastructure/        # EF Core DbContext, Dapper, AI Agents
+│       ├── Entities/                     # Domain entities
+│       ├── Persistence/                  # DbContext, configurations, migrations
+│       ├── Queries/                      # Dapper queries (TeamQueries)
+│       ├── SeedData/                     # Development seed data
+│       └── AI/                           # AI agent interfaces
 └── tests/
     └── TimboLearn.IntegrationTests/      # WebApplicationFactory + Testcontainers
 ```
+
+**Note:** The `TimboLearn.AppHost` project (.NET Aspire orchestrator) has been removed due to workload deprecation in .NET 10. The API runs standalone with SQLite for simplified local development.
 
 ---
 
@@ -92,28 +101,64 @@ TimboLearn.sln
 ### Prerequisites
 
 - .NET 10 SDK
-- SQL Server (LocalDB or Express)
 - Visual Studio 2022 / Rider / VS Code
+- (Optional) SQL Server (LocalDB or Express) - for production-like setup
 
-### Build & Run
+### Quick Start - Local Development Mode (Recommended)
+
+**No SQL Server required!** The project uses SQLite by default for easy local development and demos.
 
 ```bash
-# Restore dependencies
+# 1. Restore dependencies
 dotnet restore
 
-# Build solution
+# 2. Build solution
 dotnet build
 
-# Run with .NET Aspire (recommended)
-dotnet run --project src/TimboLearn.AppHost
-
-# OR run API directly
+# 3. Run the API (SQLite database auto-created)
 dotnet run --project src/TimboLearn.Api
+
+# 4. Open Swagger UI
+# Navigate to: http://localhost:5000/swagger
 ```
+
+**Auto-Seeded Demo Data:**
+- 10 Users (Alice through Jack)
+- 2 Teams (Engineering Team with 5 users, Marketing Team with 8 users)
+- 3 Content Courses (Cybersecurity, Communication, Project Management)
+- 3 Course Assignments
+
+### Testing the API
+
+**Option 1: Generate Test Token (Easiest)**
+
+1. In Swagger UI, call `POST /api/test-token` (no auth required)
+2. Copy the returned JWT token
+3. Click "Authorize" button
+4. Paste: `Bearer <your-token-here>`
+5. Now you can call all protected endpoints!
+
+**Option 2: Use Auth0/Entra ID**
+
+Configure `appsettings.json` with your Auth0 or Entra ID details.
 
 ### Database Setup
 
+**SQLite (Default - for local development):**
 ```bash
+# Database is auto-created as timbolearn.db in the Api project folder
+
+# To reset: delete the .db file and re-run
+rm src/TimboLearn.Api/timbolearn.db
+
+# Migrations are auto-applied on startup in Development mode
+```
+
+**SQL Server (Optional - for production-like testing):**
+```bash
+# Update connection string in appsettings.json:
+# "ConnectionStrings": { "TimboLearnDb": "Server=(localdb)\\mssqllocaldb;Database=TimboLearn;Trusted_Connection=True;" }
+
 # Create migrations
 dotnet ef migrations add InitialCreate --project src/TimboLearn.Infrastructure --startup-project src/TimboLearn.Api
 
@@ -125,7 +170,7 @@ dotnet ef database update --project src/TimboLearn.Infrastructure --startup-proj
 
 Once running, access the Swagger UI at:
 ```
-https://localhost:5001/swagger
+http://localhost:5000/swagger
 ```
 
 ---
@@ -176,6 +221,8 @@ Tokens must include the following claims:
 - `role`: User role (optional, for authorization)
 - `permission`: Specific permissions (optional)
 
+**For Local Development:** Use `POST /api/test-token` endpoint to generate a valid test token with all required claims. The test token uses a symmetric signing key configured in `appsettings.json`.
+
 ---
 
 ## Domain Model
@@ -209,11 +256,11 @@ Team hierarchy retrieval uses a recursive Common Table Expression:
 ```sql
 WITH TeamTree AS (
     SELECT Id, Name, Code, ParentTeamId, 0 AS Level
-    FROM dbo.Teams
+    FROM Teams
     WHERE Id = @ParentTeamId
     UNION ALL
     SELECT t.Id, t.Name, t.Code, t.ParentTeamId, tt.Level + 1
-    FROM dbo.Teams t
+    FROM Teams t
     INNER JOIN TeamTree tt ON t.ParentTeamId = tt.Id
 )
 SELECT * FROM TeamTree ORDER BY Level, Name;
@@ -250,6 +297,38 @@ The `POST /api/content-courses/ai-generate` endpoint demonstrates AI-assisted co
   ]
 }
 ```
+
+---
+
+## Development Features
+
+The project includes several features to make local development and demos easier:
+
+### 1. SQLite Database (Default)
+- Zero setup required - database file auto-created on first run
+- Connection string: `Data Source=timbolearn.db`
+- Switch to SQL Server by updating `appsettings.json`
+
+### 2. Auto-Seeded Demo Data
+- **10 Users**: Alice Johnson through Jack Anderson
+- **2 Teams**: 
+  - Engineering Team (5 members)
+  - Marketing Team (8 members, with some overlap)
+- **3 Content Courses**: Pre-built training courses with assignments
+- Seeding runs automatically in Development mode
+
+### 3. Test Token Generator
+- Endpoint: `POST /api/test-token`
+- No authentication required
+- Returns JWT valid for 24 hours
+- Includes all necessary claims for testing all endpoints
+- Configurable signing key in `appsettings.json`
+
+### 4. Swagger UI Enabled
+- Always enabled (not just in Development mode)
+- Interactive API documentation
+- Try endpoints directly from browser
+- Built-in JWT token input
 
 ---
 
@@ -293,6 +372,31 @@ dotnet test tests/TimboLearn.IntegrationTests
 
 ---
 
+## Troubleshooting
+
+**Database Issues:**
+```bash
+# Reset SQLite database
+rm src/TimboLearn.Api/timbolearn.db
+dotnet run --project src/TimboLearn.Api  # DB auto-recreated with seed data
+```
+
+**Migration Issues:**
+```bash
+# Remove last migration
+dotnet ef migrations remove --project src/TimboLearn.Infrastructure
+
+# Recreate migration
+dotnet ef migrations add InitialCreate --project src/TimboLearn.Infrastructure --startup-project src/TimboLearn.Api
+```
+
+**Authentication Issues:**
+- Ensure you have a valid JWT token (use `/api/test-token` endpoint)
+- Token must include `email`, `name`, and `sub` claims
+- For role-based auth, include `role` claim with values: `TeamAdmin`, `TeamManager`, or `Member`
+
+---
+
 ## About This Demo
 
 **Purpose**: This is a **showcase repository** demonstrating modern .NET enterprise architecture patterns. The code is designed to:
@@ -312,9 +416,12 @@ Built as a portfolio showcase by **TimboLearn** demonstrating:
 - Vertical Slice Architecture
 - .NET 10 features
 - Enterprise authentication/authorization patterns
-- High-performance data access
+- High-performance data access (EF Core + Dapper)
 - AI integration patterns
+- Developer-friendly local setup (SQLite, seed data, test tokens)
 
 ---
 
 *TimboLearn - Modern Enterprise Learning Platform Reference Architecture*
+
+**Quick Start:** `dotnet run --project src/TimboLearn.Api` then visit http://localhost:5000/swagger

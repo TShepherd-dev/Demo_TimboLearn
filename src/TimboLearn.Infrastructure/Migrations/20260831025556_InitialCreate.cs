@@ -1,29 +1,30 @@
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TimboLearn.Infrastructure.Persistence.Migrations
+namespace TimboLearn.Infrastructure.Migrations
 {
-    [Migration("20260828000000_InitialCreate")]
+    /// <inheritdoc />
     public partial class InitialCreate : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "ContentCourses",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ExternalIdentityId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
+                    IsPublished = table.Column<bool>(type: "bit", nullable: false),
+                    EstimatedDurationMinutes = table.Column<int>(type: "int", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_ContentCourses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,19 +49,55 @@ namespace TimboLearn.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ContentCourses",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
-                    IsPublished = table.Column<bool>(type: "bit", nullable: false),
-                    EstimatedDurationMinutes = table.Column<int>(type: "int", nullable: false),
+                    ExternalIdentityId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContentCourses", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ContentCourseAssignments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ContentCourseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TargetUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TargetTeamId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AssignedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DueDateUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContentCourseAssignments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContentCourseAssignments_ContentCourses_ContentCourseId",
+                        column: x => x.ContentCourseId,
+                        principalTable: "ContentCourses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ContentCourseAssignments_Teams_TargetTeamId",
+                        column: x => x.TargetTeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ContentCourseAssignments_Users_TargetUserId",
+                        column: x => x.TargetUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -89,40 +126,10 @@ namespace TimboLearn.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ContentCourseAssignments",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ContentCourseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TargetUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    TargetTeamId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AssignedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DueDateUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContentCourseAssignments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ContentCourseAssignments_ContentCourses_ContentCourseId",
-                        column: x => x.ContentCourseId,
-                        principalTable: "ContentCourses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ContentCourseAssignments_Users_TargetUserId",
-                        column: x => x.TargetUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ContentCourseAssignments_Teams_TargetTeamId",
-                        column: x => x.TargetTeamId,
-                        principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ContentCourseAssignments_ContentCourseId",
+                table: "ContentCourseAssignments",
+                column: "ContentCourseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContentCourseAssignments_Status",
@@ -130,24 +137,24 @@ namespace TimboLearn.Infrastructure.Persistence.Migrations
                 column: "Status");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContentCourseAssignments_TargetUserId",
-                table: "ContentCourseAssignments",
-                column: "TargetUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ContentCourseAssignments_TargetTeamId",
                 table: "ContentCourseAssignments",
                 column: "TargetTeamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContentCourseAssignments_ContentCourseId",
+                name: "IX_ContentCourseAssignments_TargetUserId",
                 table: "ContentCourseAssignments",
-                column: "ContentCourseId");
+                column: "TargetUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContentCourses_IsPublished",
                 table: "ContentCourses",
                 column: "IsPublished");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeamMemberships_TeamId_Role",
+                table: "TeamMemberships",
+                columns: new[] { "TeamId", "Role" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Teams_Code",
@@ -161,16 +168,6 @@ namespace TimboLearn.Infrastructure.Persistence.Migrations
                 column: "ParentTeamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TeamMemberships_TeamId",
-                table: "TeamMemberships",
-                column: "TeamId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeamMemberships_TeamId_Role",
-                table: "TeamMemberships",
-                columns: new[] { "TeamId", "Role" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email");
@@ -182,13 +179,23 @@ namespace TimboLearn.Infrastructure.Persistence.Migrations
                 unique: true);
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "ContentCourseAssignments");
-            migrationBuilder.DropTable(name: "TeamMemberships");
-            migrationBuilder.DropTable(name: "ContentCourses");
-            migrationBuilder.DropTable(name: "Teams");
-            migrationBuilder.DropTable(name: "Users");
+            migrationBuilder.DropTable(
+                name: "ContentCourseAssignments");
+
+            migrationBuilder.DropTable(
+                name: "TeamMemberships");
+
+            migrationBuilder.DropTable(
+                name: "ContentCourses");
+
+            migrationBuilder.DropTable(
+                name: "Teams");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }
