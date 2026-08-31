@@ -21,7 +21,7 @@ public class GetTeamHierarchyEndpoint : EndpointWithoutRequest<TeamHierarchyResp
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var teamId = Route<Guid>("id");
+        var teamId = Route<int>("id");
         var hierarchy = await _teamService.GetHierarchyAsync(teamId, ct);
 
         if (hierarchy == null)

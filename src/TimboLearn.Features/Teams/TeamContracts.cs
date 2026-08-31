@@ -4,24 +4,24 @@ public record CreateTeamRequest(
     string Name,
     string Code,
     string? Description = null,
-    Guid? ParentTeamId = null
+    int? ParentTeamId = null
 );
 
 public record CreateTeamResponse(
-    Guid Id,
+    int Id,
     string Name,
     string Code,
     string? Description,
-    Guid? ParentTeamId
+    int? ParentTeamId
 );
 
 public record AddUserToTeamRequest(
-    Guid UserId,
+    int UserId,
     TeamRole Role
 );
 
 public record TeamHierarchyResponse(
-    Guid Id,
+    int Id,
     string Name,
     string Code,
     int Level,

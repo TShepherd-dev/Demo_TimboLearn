@@ -8,7 +8,7 @@ public record CreateContentCourseRequest(
 );
 
 public record CreateContentCourseResponse(
-    Guid Id,
+    int Id,
     string Title,
     string Description,
     int EstimatedDurationMinutes,
@@ -17,16 +17,16 @@ public record CreateContentCourseResponse(
 );
 
 public record AssignContentCourseRequest(
-    Guid? TargetUserId = null,
-    Guid? TargetTeamId = null,
+    int? TargetUserId = null,
+    int? TargetTeamId = null,
     DateTime? DueDateUtc = null
 );
 
 public record AssignContentCourseResponse(
-    Guid AssignmentId,
-    Guid ContentCourseId,
-    Guid? TargetUserId,
-    Guid? TargetTeamId,
+    int AssignmentId,
+    int ContentCourseId,
+    int? TargetUserId,
+    int? TargetTeamId,
     DateTime AssignedAtUtc,
     DateTime? DueDateUtc
 );

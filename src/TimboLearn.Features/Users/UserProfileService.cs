@@ -38,7 +38,6 @@ public class UserProfileService : IUserProfileService
 
             user = new User
             {
-                Id = Guid.NewGuid(),
                 ExternalIdentityId = externalId,
                 Email = email,
                 FirstName = firstName,

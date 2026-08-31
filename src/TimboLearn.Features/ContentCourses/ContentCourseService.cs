@@ -14,9 +14,9 @@ public interface IContentCourseService
         CancellationToken cancellationToken = default);
 
     Task<AssignContentCourseResponse> AssignContentCourseAsync(
-        Guid contentCourseId,
-        Guid? targetUserId,
-        Guid? targetTeamId,
+        int contentCourseId,
+        int? targetUserId,
+        int? targetTeamId,
         DateTime? dueDateUtc,
         CancellationToken cancellationToken = default);
 
@@ -52,7 +52,6 @@ public class ContentCourseService : IContentCourseService
     {
         var contentCourse = new ContentCourse
         {
-            Id = Guid.NewGuid(),
             Title = title,
             Description = description,
             EstimatedDurationMinutes = estimatedDurationMinutes,
@@ -74,9 +73,9 @@ public class ContentCourseService : IContentCourseService
     }
 
     public async Task<AssignContentCourseResponse> AssignContentCourseAsync(
-        Guid contentCourseId,
-        Guid? targetUserId,
-        Guid? targetTeamId,
+        int contentCourseId,
+        int? targetUserId,
+        int? targetTeamId,
         DateTime? dueDateUtc,
         CancellationToken cancellationToken = default)
     {
@@ -86,7 +85,6 @@ public class ContentCourseService : IContentCourseService
 
         var assignment = new ContentCourseAssignment
         {
-            Id = Guid.NewGuid(),
             ContentCourseId = contentCourseId,
             TargetUserId = targetUserId,
             TargetTeamId = targetTeamId,
@@ -122,7 +120,6 @@ public class ContentCourseService : IContentCourseService
     {
         var contentCourse = new ContentCourse
         {
-            Id = Guid.NewGuid(),
             Title = result.Title,
             Description = result.Description,
             EstimatedDurationMinutes = result.EstimatedDurationMinutes,

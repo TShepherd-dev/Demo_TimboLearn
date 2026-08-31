@@ -17,13 +17,13 @@ public class AssignContentCourseEndpoint : Endpoint<AssignContentCourseRequest, 
         Summary(s =>
         {
             s.Summary = "Assign content course";
-            s.Description = "Route parameter: id (course Guid). Assigns to user or team.";
+            s.Description = "Route parameter: id (course int). Assigns to user or team.";
         });
     }
 
     public override async Task HandleAsync(AssignContentCourseRequest req, CancellationToken ct)
     {
-        var courseId = Route<Guid>("id");
+        var courseId = Route<int>("id");
         await _service.AssignContentCourseAsync(courseId, req.TargetUserId, req.TargetTeamId, null, ct);
         await SendOkAsync(new AssignContentCourseResponse { Success = true }, ct);
     }
@@ -31,8 +31,8 @@ public class AssignContentCourseEndpoint : Endpoint<AssignContentCourseRequest, 
 
 public class AssignContentCourseRequest
 {
-    public Guid? TargetUserId { get; set; }
-    public Guid? TargetTeamId { get; set; }
+    public int? TargetUserId { get; set; }
+    public int? TargetTeamId { get; set; }
 }
 
 public class AssignContentCourseResponse

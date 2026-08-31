@@ -4,10 +4,10 @@ using TimboLearn.Infrastructure.Entities;
 namespace TimboLearn.Infrastructure.Queries;
 
 public record TeamFlatDto(
-    Guid Id,
+    int Id,
     string Name,
     string Code,
-    Guid? ParentTeamId,
+    int? ParentTeamId,
     int Level
 );
 
@@ -20,7 +20,7 @@ public class TeamQueries
         _connectionFactory = connectionFactory;
     }
 
-    public async Task<IEnumerable<TeamFlatDto>> GetTeamHierarchyAsync(Guid parentTeamId)
+    public async Task<IEnumerable<TeamFlatDto>> GetTeamHierarchyAsync(int parentTeamId)
     {
         const string sql = """
             WITH TeamTree AS (
@@ -58,7 +58,7 @@ public class TeamQueries
         return await connection.QueryAsync<TeamFlatDto>(sql);
     }
 
-    public async Task<TeamFlatDto?> GetTeamByIdAsync(Guid teamId)
+    public async Task<TeamFlatDto?> GetTeamByIdAsync(int teamId)
     {
         const string sql = """
             SELECT Id, Name, Code, ParentTeamId, 0 AS Level
@@ -70,7 +70,7 @@ public class TeamQueries
         return await connection.QueryFirstOrDefaultAsync<TeamFlatDto>(sql, new { TeamId = teamId });
     }
 
-    public async Task<IEnumerable<Guid>> GetTeamIdsAsync(Guid userId)
+    public async Task<IEnumerable<int>> GetTeamIdsAsync(int userId)
     {
         const string sql = """
             SELECT TeamId
@@ -79,12 +79,12 @@ public class TeamQueries
             """;
 
         using var connection = _connectionFactory.CreateConnection();
-        return await connection.QueryAsync<Guid>(sql, new { UserId = userId });
+        return await connection.QueryAsync<int>(sql, new { UserId = userId });
     }
 
     public async Task<IEnumerable<UserWithTeamsDto>> SearchUsersAsync(
         string? searchTerm = null,
-        Guid? teamId = null,
+        int? teamId = null,
         int page = 1,
         int pageSize = 50)
     {
@@ -122,7 +122,7 @@ public class TeamQueries
 }
 
 public record UserWithTeamsDto(
-    Guid Id,
+    int Id,
     string Email,
     string FirstName,
     string LastName,

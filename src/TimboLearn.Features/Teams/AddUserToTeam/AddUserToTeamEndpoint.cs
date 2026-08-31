@@ -16,7 +16,7 @@ public class AddUserToTeamEndpoint : Endpoint<AddUserToTeamRequest>
         Summary(s => {
             s.Summary = "Assigns a user to a team with a specific role";
             s.ExampleRequest = new AddUserToTeamRequest(
-                Guid.NewGuid(),
+                1,
                 TeamRole.TeamManager
             );
         });
@@ -24,7 +24,7 @@ public class AddUserToTeamEndpoint : Endpoint<AddUserToTeamRequest>
 
     public override async Task HandleAsync(AddUserToTeamRequest req, CancellationToken ct)
     {
-        var teamId = Route<Guid>("id");
+        var teamId = Route<int>("id");
         await _teamService.AddUserToTeamAsync(teamId, req.UserId, req.Role, ct);
         await SendNoContentAsync();
     }

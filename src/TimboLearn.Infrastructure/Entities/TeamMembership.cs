@@ -9,8 +9,8 @@ public enum TeamRole
 
 public class TeamMembership
 {
-    public Guid UserId { get; set; }
-    public Guid TeamId { get; set; }
+    public int UserId { get; set; }
+    public int TeamId { get; set; }
     public TeamRole Role { get; set; }
     public DateTime AssignedAtUtc { get; set; } = DateTime.UtcNow;
     

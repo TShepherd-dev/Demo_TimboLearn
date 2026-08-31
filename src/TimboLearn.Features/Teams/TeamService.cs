@@ -10,17 +10,17 @@ public interface ITeamService
         string name,
         string code,
         string? description,
-        Guid? parentTeamId,
+        int? parentTeamId,
         CancellationToken cancellationToken = default);
 
     Task AddUserToTeamAsync(
-        Guid teamId,
-        Guid userId,
+        int teamId,
+        int userId,
         TeamRole role,
         CancellationToken cancellationToken = default);
 
     Task<TeamHierarchyResponse?> GetHierarchyAsync(
-        Guid teamId,
+        int teamId,
         CancellationToken cancellationToken = default);
 }
 
@@ -39,12 +39,11 @@ public class TeamService : ITeamService
         string name,
         string code,
         string? description,
-        Guid? parentTeamId,
+        int? parentTeamId,
         CancellationToken cancellationToken = default)
     {
         var team = new Team
         {
-            Id = Guid.NewGuid(),
             Name = name,
             Code = code,
             Description = description,
@@ -64,8 +63,8 @@ public class TeamService : ITeamService
     }
 
     public async Task AddUserToTeamAsync(
-        Guid teamId,
-        Guid userId,
+        int teamId,
+        int userId,
         TeamRole role,
         CancellationToken cancellationToken = default)
     {
@@ -82,7 +81,7 @@ public class TeamService : ITeamService
     }
 
     public async Task<TeamHierarchyResponse?> GetHierarchyAsync(
-        Guid teamId,
+        int teamId,
         CancellationToken cancellationToken = default)
     {
         var team = await _dbContext.Teams.FindAsync(teamId);
@@ -96,7 +95,7 @@ public class TeamService : ITeamService
 
     private TeamHierarchyResponse BuildHierarchyTree(
         List<Infrastructure.Queries.TeamFlatDto> flatList,
-        Guid parentId)
+        int parentId)
     {
         var parent = flatList.First(x => x.Id == parentId);
         var children = flatList

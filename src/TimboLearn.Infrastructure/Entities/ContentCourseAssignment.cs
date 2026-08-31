@@ -10,10 +10,10 @@ public enum AssignmentStatus
 
 public class ContentCourseAssignment
 {
-    public Guid Id { get; set; }
-    public Guid ContentCourseId { get; set; }
-    public Guid? TargetUserId { get; set; }
-    public Guid? TargetTeamId { get; set; }
+    public int Id { get; set; }
+    public int ContentCourseId { get; set; }
+    public int? TargetUserId { get; set; }
+    public int? TargetTeamId { get; set; }
     public DateTime AssignedAtUtc { get; set; } = DateTime.UtcNow;
     public DateTime? DueDateUtc { get; set; }
     public AssignmentStatus Status { get; set; } = AssignmentStatus.NotStarted;

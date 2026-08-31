@@ -1,7 +1,7 @@
 namespace TimboLearn.Features.Users;
 
 public record UserProfileResponse(
-    Guid Id,
+    int Id,
     string Email,
     string FirstName,
     string LastName,

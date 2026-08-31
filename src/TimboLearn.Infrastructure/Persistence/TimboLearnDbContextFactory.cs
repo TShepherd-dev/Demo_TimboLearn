@@ -9,7 +9,7 @@ public class TimboLearnDbContextFactory : IDesignTimeDbContextFactory<TimboLearn
     public TimboLearnDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<TimboLearnDbContext>();
-        optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=TimboLearn;Trusted_Connection=True;TrustServerCertificate=true;");
+        optionsBuilder.UseSqlite("Data Source=timbolearn.db");
         
         return new TimboLearnDbContext(optionsBuilder.Options);
     }
