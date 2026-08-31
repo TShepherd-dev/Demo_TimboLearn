@@ -48,23 +48,34 @@ Navigate to: **http://localhost:5000/swagger**
 
 **This is the easiest way to test everything!**
 
+The API includes a built-in test token generator endpoint that creates valid JWT tokens for local development. This bypasses the need for Auth0 or Entra ID during development.
+
 1. **Get a test token:**
    - In Swagger UI, find the `POST /api/test-token` endpoint
    - Click "Try it out"
    - Click "Execute"
-   - Copy the returned JWT token
+   - Copy the returned JWT token (starts with `eyJ...`)
 
 2. **Authorize with your token:**
-   - Click the "Authorize" button (top right)
-   - Paste: `Bearer <your-token-here>`
-   - Click "Authorize"
-   - Click "Close"
+   - Click the 🔒 **Authorize** button (top right of Swagger UI)
+   - In the **Value** field, enter: `Bearer <paste-your-token-here>`
+     - Example: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
+     - **Important:** Include the word "Bearer" followed by a space, then your token
+   - Click **Authorize**
+   - Click **Close**
 
 3. **Test any endpoint:**
-   - All endpoints now show a lock icon (unlocked)
+   - All protected endpoints now show an unlocked padlock icon
    - Click "Try it out" on any endpoint
    - Execute with or without modifying parameters
    - See live responses from your database!
+
+**Test Token Details:**
+- **Email:** `demo@timbolearn.local`
+- **Name:** `Demo User`
+- **Role:** `TeamAdmin` (has all permissions)
+- **Validity:** 24 hours
+- **Claims included:** `sub`, `email`, `name`, `role`, `permission`
 
 ### Option 2: Use Auth0 or Entra ID
 

@@ -358,6 +358,99 @@ public class ContentCourseAiAgent : IContentCourseAiAgent
 
 ---
 
+## Technology Choices
+
+### Why FastEndpoints?
+
+**FastEndpoints** is a lightweight API framework built on top of ASP.NET Core Minimal APIs that enforces the REPR (Request-Endpoint-Response) pattern.
+
+**Why we chose it:**
+
+1. **Vertical Slice Enforcement**: Each endpoint is a self-contained class, naturally enforcing separation of concerns
+2. **Zero Boilerplate**: No controllers, no attributes cluttering your code
+3. **Built-in Best Practices**: Automatic validation, FluentValidation integration, OpenAPI support
+4. **Performance**: Faster than controller-based APIs due to reduced reflection and optimized pipelines
+5. **Testability**: Each endpoint is a simple class that can be unit tested in isolation
+
+**Example:**
+```csharp
+public class GetUserProfileEndpoint : EndpointWithoutRequest<UserProfileResponse>
+{
+    private readonly IUserProfileService _userService;
+
+    public GetUserProfileEndpoint(IUserProfileService userService)
+    {
+        _userService = userService;
+    }
+
+    public override void Configure()
+    {
+        Get("/api/users/me");
+        Policies("RequireAuthenticatedUser");
+        Summary(s =>
+        {
+            s.Summary = "Get current user profile";
+            s.Description = "Returns authenticated user details with JIT provisioning";
+        });
+    }
+
+    public override async Task HandleAsync(CancellationToken ct)
+    {
+        var userId = User.GetSubjectId() ?? throw new BadHttpRequestException("Missing sub claim");
+        var profile = await _userService.GetProfileAsync(userId, ct);
+        await SendOkAsync(profile, ct);
+    }
+}
+```
+
+**Alternative Considered:** Minimal APIs directly, but FastEndpoints provides better organization for larger codebases with stronger conventions.
+
+### Why NSwag for OpenAPI/Swagger?
+
+**NSwag** provides comprehensive OpenAPI/Swagger documentation generation with excellent .NET integration.
+
+**Why we chose it:**
+
+1. **FastEndpoints Integration**: Works seamlessly via `FastEndpoints.Swagger` package
+2. **Rich Configuration**: Extensive customization of OpenAPI documents
+3. **Client Generation**: Can generate TypeScript/C# API clients from OpenAPI spec (future use)
+4. **Swagger UI**: Built-in, customizable Swagger UI middleware
+5. **Mature & Stable**: Well-established library with strong community support
+
+**Configuration:**
+```csharp
+// In Program.cs
+builder.Services.SwaggerDocument(options =>
+{
+    options.DocumentSettings = s =>
+    {
+        s.Title = "TimboLearn API";
+        s.Description = "Enterprise Learning Platform API";
+        s.Version = "v1";
+    };
+});
+
+app.UseSwaggerGen(); // Enables Swagger UI at /swagger
+```
+
+**Alternative Considered:** Swashbuckle (Microsoft's default), but NSwag has better FastEndpoints integration and more advanced features for client generation.
+
+### Why SQLite for Development?
+
+**SQLite** is the default database for local development and demos.
+
+**Why we chose it:**
+
+1. **Zero Setup**: No SQL Server installation required
+2. **Portable**: Single file database, easy to share/reset
+3. **Fast**: In-memory operations, instant startup
+4. **Entity Framework Compatible**: Full EF Core support
+5. **Demo-Friendly**: Delete the `.db` file to reset everything
+
+**Production Path:** Simply change the connection string to SQL Server/Azure SQL in `appsettings.json` - no code changes required!
+
+---
+
 ## Testing Strategy
 
 ### Integration Tests with Testcontainers
