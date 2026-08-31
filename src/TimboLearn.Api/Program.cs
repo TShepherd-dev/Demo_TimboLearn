@@ -1,21 +1,13 @@
 using FastEndpoints;
-using FastEndpoints.Swagger;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using TimboLearn.Api.Authorization;
 using TimboLearn.Api.Middleware;
 using TimboLearn.Infrastructure;
-using TimboLearn.Infrastructure.Entities;
-using TimboLearn.Infrastructure.Persistence;
-using TimboLearn.Infrastructure.Queries;
+using TimboLearn.Infrastructure.AI;
 using TimboLearn.Infrastructure.SeedData;
 using TimboLearn.Features.ContentCourses;
 using TimboLearn.Features.Users;
 using TimboLearn.Features.Teams;
-using Microsoft.Data.Sqlite;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +47,9 @@ builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IContentCourseService, ContentCourseService>();
 
+builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+builder.Services.AddScoped<ITeamService, TeamService>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -81,17 +76,6 @@ builder.Services.AddEndpointsApiExplorer();
 // Register authorization policies and handlers using modular pattern
 builder.Services.AddAuthorizationModulesFromAssembly(typeof(AuthorizationModuleRegistrar));
 
-// Configure Swagger/OpenAPI using FastEndpoints.Swagger
-builder.Services.SwaggerDocument(options =>
-{
-    options.DocumentSettings = s =>
-    {
-        s.Title = "TimboLearn API";
-        s.Description = "Enterprise Learning Platform API - Showcase Demo";
-        s.Version = "v1";
-    };
-});
-
 var app = builder.Build();
 
 app.UseFastEndpoints();
@@ -103,7 +87,6 @@ if (app.Environment.IsDevelopment())
     dbContext.Database.EnsureCreated();
     await Seeder.SeedAsync(dbContext);
     
-    app.UseSwaggerGen();
 }
 
 app.UseAuthentication();
