@@ -6,7 +6,7 @@
 
 **Purpose:** This repository demonstrates what a modern enterprise learning platform backend looks like when built from scratch using industry best practices.
 
-> **📚 Full Documentation:** See the **[docs folder](docs/README.md)** for detailed guides on getting started, architecture, testing, and troubleshooting.
+> **📚 Full Documentation:** See the **Wiki** for detailed guides on [getting started](https://github.com/TimboLearn/TimboLearn/wiki/Getting-Started), [architecture](https://github.com/TimboLearn/TimboLearn/wiki/Architecture), [testing](https://github.com/TimboLearn/TimboLearn/wiki/Testing), and [troubleshooting](https://github.com/TimboLearn/TimboLearn/wiki/Troubleshooting).
 
 ---
 
@@ -87,10 +87,10 @@ dotnet run --project src/TimboLearn.Api
 
 | Document | Description |
 |---|---|
-| **[Getting Started](docs/GettingStarted.md)** | Complete setup guide, test tokens, database config |
-| **[Architecture](docs/Architecture.md)** | Technical deep dive, technology choices, design patterns |
-| **[Testing Guide](docs/Testing.md)** | Manual testing scenarios, integration tests, curl examples |
-| **[Troubleshooting](docs/Troubleshooting.md)** | Common issues and solutions |
+| **[Getting Started](https://github.com/TimboLearn/TimboLearn/wiki/Getting-Started)** | Complete setup guide, test tokens, database config |
+| **[Architecture](https://github.com/TimboLearn/TimboLearn/wiki/Architecture)** | Technical deep dive, technology choices, design patterns |
+| **[Testing Guide](https://github.com/TimboLearn/TimboLearn/wiki/Testing)** | Manual testing scenarios, integration tests, curl examples |
+| **[Troubleshooting](https://github.com/TimboLearn/TimboLearn/wiki/Troubleshooting)** | Common issues and solutions |
 
 ---
 
