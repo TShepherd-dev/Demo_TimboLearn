@@ -2,7 +2,7 @@
 
 ## Portfolio Showcase Project
 
-**TimboLearn** is an enterprise-grade demonstration application built with **.NET 10** showcasing modern C# backend architecture patterns for learning platforms.
+**TimboLearn** is an enterprise-grade demonstration application built with **.NET 10** showcasing modern C# backend architecture patterns for a n-layered/onion application - in this case, a very basic learning platform.
 
 **Purpose:** This repository demonstrates what a modern enterprise learning platform backend looks like when built from scratch using industry best practices.
 
