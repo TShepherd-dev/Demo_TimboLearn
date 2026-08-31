@@ -74,6 +74,17 @@ builder.Services.AddFastEndpoints();
 // Register API Explorer for OpenAPI/Swagger
 builder.Services.AddEndpointsApiExplorer();
 
+// Configure Swagger/OpenAPI using FastEndpoints.Swagger
+builder.Services.SwaggerDocument(options =>
+{
+    options.DocumentSettings = s =>
+    {
+        s.Title = "TimboLearn API";
+        s.Description = "Enterprise Learning Platform API - Showcase Demo";
+        s.Version = "v1";
+    };
+});
+
 // Register authorization policies and handlers using modular pattern
 builder.Services.AddAuthorizationModulesFromAssembly(typeof(AuthorizationModuleRegistrar));
 
