@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FastEndpoints.Swagger;
 using Microsoft.EntityFrameworkCore;
 using TimboLearn.Api.Authorization;
 using TimboLearn.Api.Middleware;
@@ -87,6 +88,7 @@ if (app.Environment.IsDevelopment())
     dbContext.Database.EnsureCreated();
     await Seeder.SeedAsync(dbContext);
     
+    app.UseSwaggerGen();
 }
 
 app.UseAuthentication();
