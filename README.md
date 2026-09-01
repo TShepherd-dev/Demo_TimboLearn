@@ -25,9 +25,9 @@
 ❌ **Not a template** - opinionated demo, not a generic starter template  
 ❌ **Not actively maintained** - snapshot portfolio piece, not a long-term project  
 
-_A note about the AI code generation - I used AI to help me put together this codebase to get it up and running. A number of things like the Authorization Registration startup logic and the API Problem Responses were from my own API experiences and they were not a part of what AI initally generated. 
+_A note about the AI code generation - I used AI to help me put together this codebase to get it up and running. A number of things like the Authorization Registration startup logic and the API Problem Responses were from my own API experiences and they were not a part of what AI initially generated._
 
-I believe AI coding tools are just that - tools. These tools are a way for me to get to the goal in a faster way, but it's also important to just not accept what it outputs and it's critical to read what it has done, and even more importantly, RUN what it has done as I believe this is the best critque for its output._
+_I believe AI coding tools are just that - tools. These tools are a way for me to get to the goal in a faster way, but it's also important to just not accept what it outputs and it's critical to read what it has done, and even more importantly, RUN what it has done - the code cannot be just taken at face value._
 
 ---
 
