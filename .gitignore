@@ -107,3 +107,4 @@ coveragehistory.json
 
 # Migration files (keep source control but ignore auto-generated)
 # src/*/Migrations/*.Designer.cs
+src/TimboLearn.Api/timbolearn.db

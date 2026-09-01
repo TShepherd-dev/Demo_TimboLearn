@@ -4,7 +4,7 @@
 
 **TimboLearn** is an enterprise-grade demonstration application built with **.NET 10** showcasing modern C# backend architecture patterns for a n-layered/onion application - in this case, a very basic learning platform.
 
-**Purpose:** This repository demonstrates what a modern enterprise learning platform backend looks like when built from scratch using industry best practices.
+**Purpose:** This demonstrates the starting point for what a modern enterprise app platform backend could look like when built from scratch using industry best practices. This is not the only way things can be started.
 
 > **📚 Full Documentation:** See the **Wiki** for detailed guides on [getting started](https://github.com/TimboLearn/TimboLearn/wiki/Getting-Started), [architecture](https://github.com/TimboLearn/TimboLearn/wiki/Architecture), [testing](https://github.com/TimboLearn/TimboLearn/wiki/Testing), and [troubleshooting](https://github.com/TimboLearn/TimboLearn/wiki/Troubleshooting).
 
