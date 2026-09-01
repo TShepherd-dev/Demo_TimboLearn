@@ -110,3 +110,4 @@ coveragehistory.json
 src/TimboLearn.Api/timbolearn.db
 src/TimboLearn.Api/timbolearn.db-shm
 src/TimboLearn.Api/timbolearn.db-wal
+/src/TimboLearn.Api/timbolearn.db
