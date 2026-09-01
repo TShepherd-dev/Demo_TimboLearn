@@ -2,6 +2,18 @@ using Microsoft.Extensions.Logging;
 
 namespace TimboLearn.Infrastructure.AI;
 
+/// <summary>
+/// MOCK IMPLEMENTATION - Returns templated responses without calling real AI.
+/// 
+/// WHY MOCKED: This is intentional for a demo/portfolio project because:
+/// 1. No truly free AI provider exists without signup/API keys
+/// 2. Provider landscape changes rapidly (avoid dating the project)
+/// 3. Demo must work offline/at conferences without external dependencies
+/// 
+/// TO INTEGRATE REAL AI: See docs/AI-Integration.md for complete examples
+/// for Ollama (local/free), Google Gemini (free tier), and Azure OpenAI (enterprise).
+/// Simply implement IContentCourseAiAgent and register in DI - architecture is ready.
+/// </summary>
 public class ContentCourseAiAgent : IContentCourseAiAgent
 {
     private readonly ILogger<ContentCourseAiAgent> _logger;
