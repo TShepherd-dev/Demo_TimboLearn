@@ -1,6 +1,7 @@
 using TimboLearn.Infrastructure.Persistence;
 using TimboLearn.Infrastructure.AI;
 using Microsoft.EntityFrameworkCore;
+using TimboLearn.Infrastructure;
 
 namespace TimboLearn.Features.ContentCourses;
 
@@ -50,6 +51,23 @@ public class ContentCourseService : IContentCourseService
         bool isPublished,
         CancellationToken cancellationToken = default)
     {
+        // Validate input
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            throw new ValidationException("Invalid Course Data", new Dictionary<string, object?>
+            {
+                { "title", "Course title is required" }
+            });
+        }
+
+        if (estimatedDurationMinutes <= 0)
+        {
+            throw new ValidationException("Invalid Course Data", new Dictionary<string, object?>
+            {
+                { "estimatedDurationMinutes", "Duration must be greater than 0 minutes" }
+            });
+        }
+
         var contentCourse = new ContentCourse
         {
             Title = title,
@@ -79,9 +97,50 @@ public class ContentCourseService : IContentCourseService
         DateTime? dueDateUtc,
         CancellationToken cancellationToken = default)
     {
-        var contentCourse = await _dbContext.ContentCourses.FindAsync(new object[] { contentCourseId }, cancellationToken);
+        // Validate course exists
+        var contentCourse = await _dbContext.ContentCourses.FindAsync([contentCourseId], cancellationToken);
         if (contentCourse == null)
-            throw new InvalidOperationException($"Content group {contentCourseId} not found");
+        {
+            throw new NotFoundException("ContentCourse", $"Content course with ID {contentCourseId} was not found");
+        }
+
+        // Validate at least one target is provided
+        if (!targetUserId.HasValue && !targetTeamId.HasValue)
+        {
+            throw new ValidationException("Invalid Assignment", new Dictionary<string, object?>
+            {
+                { "targetUserId", "Either targetUserId or targetTeamId must be provided" }
+            });
+        }
+
+        // Validate user exists if provided
+        if (targetUserId.HasValue)
+        {
+            var user = await _dbContext.Users.FindAsync([targetUserId.Value], cancellationToken);
+            if (user == null)
+            {
+                throw new NotFoundException("User", $"User with ID {targetUserId.Value} was not found");
+            }
+        }
+
+        // Validate team exists if provided
+        if (targetTeamId.HasValue)
+        {
+            var team = await _dbContext.Teams.FindAsync([targetTeamId.Value], cancellationToken);
+            if (team == null)
+            {
+                throw new NotFoundException("Team", $"Team with ID {targetTeamId.Value} was not found");
+            }
+        }
+
+        // Validate due date is in the future if provided
+        if (dueDateUtc.HasValue && dueDateUtc.Value <= DateTime.UtcNow)
+        {
+            throw new ValidationException("Invalid Assignment", new Dictionary<string, object?>
+            {
+                { "dueDateUtc", "Due date must be in the future" }
+            });
+        }
 
         var assignment = new ContentCourseAssignment
         {

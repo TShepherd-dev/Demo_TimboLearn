@@ -157,6 +157,15 @@ var app = builder.Build();
 app.UseFastEndpoints();
 
 // ----------------------------------------------------------------------------
+// GLOBAL EXCEPTION HANDLING
+// ----------------------------------------------------------------------------
+// Catches all unhandled exceptions and returns RFC 7807 Problem Details
+// Must be registered AFTER UseFastEndpoints() to catch endpoint exceptions
+// ----------------------------------------------------------------------------
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+// ----------------------------------------------------------------------------
 // DATABASE INITIALIZATION (Development Only)
 // ----------------------------------------------------------------------------
 // Auto-creates database and applies migrations on startup

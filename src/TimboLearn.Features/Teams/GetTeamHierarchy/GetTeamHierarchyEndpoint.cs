@@ -53,12 +53,6 @@ public class GetTeamHierarchyEndpoint : EndpointWithoutRequest<TeamHierarchyResp
         var teamId = Route<int>("id");
         var hierarchy = await _teamService.GetHierarchyAsync(teamId, ct);
 
-        if (hierarchy == null)
-        {
-            await SendNotFoundAsync();
-            return;
-        }
-
         await SendOkAsync(hierarchy, ct);
     }
 }
