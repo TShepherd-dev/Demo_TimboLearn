@@ -4,11 +4,11 @@ using TimboLearn.Infrastructure.Entities;
 namespace TimboLearn.Infrastructure.Queries;
 
 public record TeamFlatDto(
-    int Id,
+    long Id,
     string Name,
     string Code,
-    int? ParentTeamId,
-    int Level
+    long? ParentTeamId,
+    long Level
 );
 
 public class TeamQueries

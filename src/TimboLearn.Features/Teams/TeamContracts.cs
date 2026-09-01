@@ -21,9 +21,9 @@ public record AddUserToTeamRequest(
 );
 
 public record TeamHierarchyResponse(
-    int Id,
+    long Id,
     string Name,
     string Code,
-    int Level,
+    long Level,
     List<TeamHierarchyResponse> SubTeams
 );

@@ -95,7 +95,7 @@ public class TeamService : ITeamService
 
     private TeamHierarchyResponse BuildHierarchyTree(
         List<Infrastructure.Queries.TeamFlatDto> flatList,
-        int parentId)
+        long parentId)
     {
         var parent = flatList.First(x => x.Id == parentId);
         var children = flatList
